@@ -1,0 +1,282 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "exporter",
+        "annotations": {
+            "description": "Export Openshift project to another",
+            "iconClass": "icon-exporter",
+            "tags": "instant-app,exporter"
+        }
+    },
+    "objects": [
+        {
+    		"kind": "ImageStream",
+			"apiVersion": "v1",
+			"metadata": {
+				"name": "${APPLICATION_NAME}-exporter"
+			},
+			"spec": {
+				"dockerImageRepository": "ntahri/openshift-exporter",
+				"tags": [{
+					"name": "latest",
+					"from": {
+						"kind": "ImageStreamTag",
+						"name": "latest"
+					}
+				}]
+			}
+    },
+        {
+    		"kind": "ImageStream",
+			"apiVersion": "v1",
+			"metadata": {
+				"name": "${APPLICATION_NAME}-exporter-base"
+			},
+			"spec": {
+				"dockerImageRepository": "ntahri/openshift-exporter",
+				"tags": [{
+					"name": "latest",
+					"from": {
+						"kind": "ImageStreamTag",
+						"name": "latest"
+					}
+				}]
+			}
+    },
+      {
+			"kind": "BuildConfig",
+			"apiVersion": "v1",
+			"metadata": {
+				"name": "${APPLICATION_NAME}-exporter",
+				"labels": {
+					"application": "${APPLICATION_NAME}-exporter"
+				}
+			},
+			"spec": {
+				"source": {
+					"type": "Git",
+					"git": {
+						"uri": "https://github.com/nTahiri/jenkins-slave.git",
+						"ref": "master"
+					},
+					"contextDir": ""
+				},
+				"strategy": 
+        {
+					"type": "Source",
+					"sourceStrategy": {
+						"from": {
+							"kind": "ImageStreamTag",
+							"name": "${APPLICATION_NAME}-exporter-base:latest"
+						},
+						"env": [{
+							"name": "OLD_OPENSHIFT_USERNAME",
+							"value": "${OLD_OPENSHIFT_USERNAME}"
+						}, {
+							"name": "OLD_OPENSHIFT_PASSWORD",
+							"value": "${OLD_OPENSHIFT_PASSWORD}"
+						}, {
+							"name": "OLD_OPENSHIFT_URL",
+							"value": "${OLD_OPENSHIFT_URL}"
+						}, {
+							"name": "OLD_OPENSHIFT_PROJECT",
+							"value": "${OLD_OPENSHIFT_PROJECT}"
+						},
+						{
+							"name": "NEW_OPENSHIFT_USERNAME",
+							"value": "${NEW_OPENSHIFT_USERNAME}"
+						}, {
+							"name": "NEW_OPENSHIFT_PASSWORD",
+							"value": "${NEW_OPENSHIFT_PASSWORD}"
+						}, {
+							"name": "NEW_OPENSHIFT_URL",
+							"value": "${NEW_OPENSHIFT_URL}"
+						}, {
+							"name": "NEW_OPENSHIFT_PROJECT",
+							"value": "${NEW_OPENSHIFT_PROJECT}"
+						}, 
+						{
+							"name": "OPTIONS",
+							"value": "${OPTIONS}"
+						}]
+					}
+				},
+        "output":
+        {
+          "to":{
+            "kind": "ImageStreamTag",
+            "name": "${APPLICATION_NAME}-exporter:latest"
+          }
+        },
+				"triggers": [
+          {
+					"type": "ImageChange",
+					"imageChange": {}
+				  }
+          ]
+		}
+      }, 
+     {
+		    "kind": "DeploymentConfig",
+		    "apiVersion": "v1",
+		    "metadata": {
+		        "name": "${APPLICATION_NAME}-exporter",
+		        "creationTimestamp": null,
+		        "labels": {
+		            "application": "${APPLICATION_NAME}-exporter"
+		        }
+		    },
+		    "spec": {
+		        "strategy": {
+		            "type": "Rolling",
+		            "rollingParams": {
+		                "updatePeriodSeconds": 1,
+		                "intervalSeconds": 1,
+		                "timeoutSeconds": 600
+		            },
+		            "resources": {}
+		        },
+		        "triggers": [
+		            {
+		                "type": "ImageChange",
+		                "imageChangeParams": {
+		                    "automatic": true,
+		                    "containerNames": [
+		                        "${APPLICATION_NAME}-exporter"
+		                    ],
+		                    "from": {
+		                        "kind": "ImageStreamTag",
+		                        "name": "${APPLICATION_NAME}-exporter:latest"
+		                    }
+		                }
+		            }
+		        ],
+                "strategy": { 
+                  "type": "Rolling"
+                },
+		        "replicas": 1,
+		        "selector": {
+                    "name": "${APPLICATION_NAME}-exporter",
+		            "application": "${APPLICATION_NAME}-exporter",
+		            "deploymentconfig": "${APPLICATION_NAME}-exporter"
+		        },
+		        "template": {
+		            "metadata": {
+		                "creationTimestamp": null,
+		                "labels": {
+		                    "application": "${APPLICATION_NAME}-exporter",
+		                    "deploymentconfig": "${APPLICATION_NAME}-exporter"
+		                }
+		            },
+		            "spec": {
+		                "containers": [
+		                    {
+		                        "name": "${APPLICATION_NAME}-exporter",
+		                        "image": "${APPLICATION_NAME-exporter}",
+                                "env": [{
+							"name": "OLD_OPENSHIFT_USERNAME",
+							"value": "${OLD_OPENSHIFT_USERNAME}"
+						}, {
+							"name": "OLD_OPENSHIFT_PASSWORD",
+							"value": "${OLD_OPENSHIFT_PASSWORD}"
+						}, {
+							"name": "OLD_OPENSHIFT_URL",
+							"value": "${OLD_OPENSHIFT_URL}"
+						}, {
+							"name": "OLD_OPENSHIFT_PROJECT",
+							"value": "${OLD_OPENSHIFT_PROJECT}"
+						},
+						{
+							"name": "NEW_OPENSHIFT_USERNAME",
+							"value": "${NEW_OPENSHIFT_USERNAME}"
+						}, {
+							"name": "NEW_OPENSHIFT_PASSWORD",
+							"value": "${NEW_OPENSHIFT_PASSWORD}"
+						}, {
+							"name": "NEW_OPENSHIFT_URL",
+							"value": "${NEW_OPENSHIFT_URL}"
+						}, {
+							"name": "NEW_OPENSHIFT_PROJECT",
+							"value": "${NEW_OPENSHIFT_PROJECT}"
+						}, 
+						{
+							"name": "OPTIONS",
+							"value": "${OPTIONS}"
+						}],
+		                        "resources": {},
+		                        "terminationMessagePath": "/dev/termination-log",
+		                        "imagePullPolicy": "Always"
+		                    }
+		                ],
+		                "restartPolicy": "Always",
+		                "terminationGracePeriodSeconds": 30,
+		                "dnsPolicy": "ClusterFirst",
+		                "securityContext": {}
+		            }
+		        }
+		    },
+		    "status": {}
+		}
+    ],
+    "parameters": [
+        {
+            "name": "APPLICATION_NAME",
+            "description": "Application Name",
+            "value": "project-name"
+        },
+        {
+            "name": "OLD_OPENSHIFT_USERNAME",
+            "description": "OpenShift project source userName",
+            "value": "nabil",
+            "generate": "expression"
+        },
+        {
+            "name": "OLD_OPENSHIFT_PASSWORD",
+            "description": "OpenShift project source password",
+            "value": "nabil",
+            "generate": "expression"
+        },
+        {
+            "name": "OLD_OPENSHIFT_URL",
+            "description": "OpenShift project source URL",
+            "value": "http://144.217.161.255:8080"
+        },
+        {
+            "name": "OLD_OPENSHIFT_PROJECT",
+            "description": "OpenShift project source NAME",
+            "value": "test"
+        },
+        {
+            "name": "NEW_OPENSHIFT_USERNAME",
+            "description": "OpenShift project destination userName",
+            "value": "user",
+            "generate": "expression"
+        },
+        {
+            "name": "NEW_OPENSHIFT_PASSWORD",
+            "description": "OpenShift project destination Password",
+            "value": "user",
+            "generate": "expression"
+        },
+        {
+            "name": "NEW_OPENSHIFT_URL",
+            "description": "OpenShift project destination URL",
+            "value": "http://144.217.161.255:8080"
+        },
+        {
+            "name": "NEW_OPENSHIFT_PROJECT",
+            "description": "OpenShift project destination NAME",
+            "value": "test"
+        }
+		,
+        {
+            "name": "OPTIONS",
+            "description": "Liste of Objects to export (e.g. [dc,build,svc,is,template] or leave it empty for all (not recommanded))",
+            "value": "dc,build,svc,is,template"
+        }
+    ],
+    "labels": {
+        "template": "${APPLICATION_NAME}-exporter"
+    }
+}

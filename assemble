@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+echo "---> assemble script starting "
+cp -Rf /tmp/src/. ./
+
+

@@ -1,0 +1,239 @@
+{
+    "kind": "List",
+    "apiVersion": "v1",
+    "metadata": {},
+    "items": [
+        {
+            "kind": "Pod",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "jenkins-1-build",
+                "creationTimestamp": null,
+                "labels": {
+                    "openshift.io/build.name": "jenkins-1"
+                },
+                "annotations": {
+                    "openshift.io/build.name": "jenkins-1",
+                    "openshift.io/scc": "privileged"
+                }
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "docker-socket",
+                        "hostPath": {
+                            "path": "/var/run/docker.sock"
+                        }
+                    },
+                    {
+                        "name": "builder-dockercfg-otq5e-push",
+                        "secret": {
+                            "secretName": "builder-dockercfg-otq5e",
+                            "defaultMode": 420
+                        }
+                    },
+                    {
+                        "name": "builder-token-1haqp",
+                        "secret": {
+                            "secretName": "builder-token-1haqp",
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "sti-build",
+                        "image": "openshift/origin-sti-builder:v1.4.0",
+                        "args": [
+                            "--loglevel=0"
+                        ],
+                        "env": [
+                            {
+                                "name": "BUILD",
+                                "value": "{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"jenkins-1\",\"namespace\":\"ci\",\"selfLink\":\"/oapi/v1/namespaces/ci/builds/jenkins-1\",\"uid\":\"343d1959-0376-11e7-8173-fa163eb2c409\",\"resourceVersion\":\"133201\",\"creationTimestamp\":\"2017-03-07T20:39:47Z\",\"labels\":{\"app\":\"jenkins\",\"buildconfig\":\"jenkins\",\"openshift.io/build-config.name\":\"jenkins\",\"openshift.io/build.start-policy\":\"Serial\",\"template\":\"jenkins-master-s2i\"},\"annotations\":{\"openshift.io/build-config.name\":\"jenkins\",\"openshift.io/build.number\":\"1\"}},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Git\",\"git\":{\"uri\":\"https://github.com/nTahiri/s2i-jenkins.git\",\"ref\":\"master\"}},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"ntahri/jenkins-centos7@sha256:9abc6f6d06424ca6ea596f958d9f3a20a122ccb3662416d33a3734724c0be7f1\"}}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"172.30.140.77:5000/ci/jenkins-with-plugin:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-otq5e\"}},\"resources\":{\"limits\":{\"memory\":\"1Gi\"}},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[{\"message\":\"Image change\",\"imageChangeBuild\":{\"imageID\":\"ntahri/jenkins-centos7@sha256:9abc6f6d06424ca6ea596f958d9f3a20a122ccb3662416d33a3734724c0be7f1\",\"fromRef\":{\"kind\":\"ImageStreamTag\",\"namespace\":\"ci\",\"name\":\"jenkins:latest\"}}}]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"172.30.140.77:5000/ci/jenkins-with-plugin:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"ci\",\"name\":\"jenkins\"}}}\n"
+                            },
+                            {
+                                "name": "SOURCE_REPOSITORY",
+                                "value": "https://github.com/nTahiri/s2i-jenkins.git"
+                            },
+                            {
+                                "name": "SOURCE_URI",
+                                "value": "https://github.com/nTahiri/s2i-jenkins.git"
+                            },
+                            {
+                                "name": "SOURCE_REF",
+                                "value": "master"
+                            },
+                            {
+                                "name": "ORIGIN_VERSION",
+                                "value": "v1.4.0+208f053"
+                            },
+                            {
+                                "name": "ALLOWED_UIDS",
+                                "value": "1-"
+                            },
+                            {
+                                "name": "DROP_CAPS",
+                                "value": "KILL,MKNOD,SETGID,SETUID,SYS_CHROOT"
+                            },
+                            {
+                                "name": "PUSH_DOCKERCFG_PATH",
+                                "value": "/var/run/secrets/openshift.io/push"
+                            }
+                        ],
+                        "resources": {
+                            "limits": {
+                                "memory": "1Gi"
+                            },
+                            "requests": {
+                                "memory": "1Gi"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "name": "docker-socket",
+                                "mountPath": "/var/run/docker.sock"
+                            },
+                            {
+                                "name": "builder-dockercfg-otq5e-push",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/openshift.io/push"
+                            },
+                            {
+                                "name": "builder-token-1haqp",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "imagePullPolicy": "IfNotPresent",
+                        "securityContext": {
+                            "privileged": true
+                        }
+                    }
+                ],
+                "restartPolicy": "Never",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "builder",
+                "serviceAccount": "builder",
+                "nodeName": "144.217.161.255",
+                "securityContext": {},
+                "imagePullSecrets": [
+                    {
+                        "name": "builder-dockercfg-otq5e"
+                    }
+                ]
+            },
+            "status": {
+                "phase": "Pending"
+            }
+        },
+        {
+            "kind": "Pod",
+            "apiVersion": "v1",
+            "metadata": {
+                "generateName": "jenkins-2-",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "jenkins",
+                    "deployment": "jenkins-2",
+                    "deploymentconfig": "jenkins"
+                },
+                "annotations": {
+                    "kubernetes.io/created-by": "{\"kind\":\"SerializedReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"ReplicationController\",\"namespace\":\"ci\",\"name\":\"jenkins-2\",\"uid\":\"465a4b44-0376-11e7-8173-fa163eb2c409\",\"apiVersion\":\"v1\",\"resourceVersion\":\"133283\"}}\n",
+                    "openshift.io/deployment-config.latest-version": "2",
+                    "openshift.io/deployment-config.name": "jenkins",
+                    "openshift.io/deployment.name": "jenkins-2",
+                    "openshift.io/scc": "restricted"
+                }
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "jenkins-data",
+                        "emptyDir": {}
+                    },
+                    {
+                        "name": "default-token-w5k36",
+                        "secret": {
+                            "secretName": "default-token-w5k36",
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "jenkins",
+                        "image": "172.30.140.77:5000/ci/jenkins-with-plugin@sha256:15f484711f443a02541b74555b30c92f7eaf4de236df3aed35d7917132fc7f53",
+                        "ports": [
+                            {
+                                "containerPort": 8080,
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 50000,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "env": [
+                            {
+                                "name": "JENKINS_PASSWORD",
+                                "value": "password"
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "jenkins-data",
+                                "mountPath": "/var/lib/jenkins"
+                            },
+                            {
+                                "name": "default-token-w5k36",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "imagePullPolicy": "Always",
+                        "securityContext": {
+                            "capabilities": {
+                                "drop": [
+                                    "KILL",
+                                    "MKNOD",
+                                    "SETGID",
+                                    "SETUID",
+                                    "SYS_CHROOT"
+                                ]
+                            },
+                            "privileged": false,
+                            "seLinuxOptions": {
+                                "level": "s0:c10,c0"
+                            },
+                            "runAsUser": 1000090000
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "default",
+                "serviceAccount": "default",
+                "nodeName": "144.217.161.255",
+                "securityContext": {
+                    "seLinuxOptions": {
+                        "level": "s0:c10,c0"
+                    },
+                    "fsGroup": 1000090000
+                },
+                "imagePullSecrets": [
+                    {
+                        "name": "default-dockercfg-9ww7h"
+                    }
+                ]
+            },
+            "status": {
+                "phase": "Pending"
+            }
+        }
+  

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+echo "---> run script starting "
+
+cd $HOME
+
+#/bin/sh export.sh -opts=dc,is,build,svc,template -ou=old-user -opp=old-user -ourl=https://144.217.161.255:8443 -op=test -nu=new-user -npp=new-user -nurl=https://144.217.161.255:8443 -np=test
+/bin/sh export.sh -opts=${OPTIONS} -ou=${OLD_OPENSHIFT_USERNAME} -opp=${OLD_OPENSHIFT_PASSWORD} -ourl=${OLD_OPENSHIFT_URL} -op=${OLD_OPENSHIFT_PROJECT} -nu=${NEW_OPENSHIFT_USERNAME} -npp=${NEW_OPENSHIFT_PASSWORD} -nurl=${NEW_OPENSHIFT_URL} -np=${NEW_OPENSHIFT_PROJECT}
