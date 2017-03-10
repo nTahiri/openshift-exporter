@@ -1,0 +1,15 @@
+version: "3"
+services:
+  exporter:
+    image: ntahri/openshift-exporter:latest
+    container_name: exporter
+    environment:
+    - OLD_OPENSHIFT_USERNAME=nabil
+    - OLD_OPENSHIFT_PASSWORD=nabil
+    - OLD_OPENSHIFT_URL=https://144.217.161.255:8443
+    - OLD_OPENSHIFT_PROJECT=test
+    - NEW_OPENSHIFT_USERNAME=user
+    - NEW_OPENSHIFT_PASSWORD=user
+    - NEW_OPENSHIFT_URL=https://144.217.161.255:8443
+    - NEW_OPENSHIFT_PROJECT=user-test
+    - OPTIONS=dc,bc,route,svc,is,template
