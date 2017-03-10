@@ -1,3 +1,5 @@
+#FROM centos:centos7
+
 FROM openshift/base-centos7
 
 
@@ -27,28 +29,31 @@ RUN curl -fsSL https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/bina
 ENV JAVA_HOME /usr/lib/jvm/java
 ENV MAVEN_HOME /usr/share/maven
 
-RUN mkdir /nt
-ENV HOME /nt
+#RUN mkdir /nt
+#ENV HOME /nt
 
 # Copy the S2I scripts to /usr/libexec/s2i since we set the label that way
 COPY  ["run", "assemble", "/usr/libexec/s2i/"]
-COPY ["oc", "/bin/"]
-COPY ["export.sh", "/nt/"]
+COPY ["oc", "jq", "/bin/"]
+COPY ["export.sh", "/opt/app-root/"]
 
 ENV OPENSHIFT_OC_HOME /bin
 RUN chmod +x /bin/oc && \
-	chown -R 1001:0 /bin
+        chmod +x /bin/jq && \
+        chown -R 1001:0 /bin
 
-RUN chmod +x /nt/export.sh && \
-	chown -R 1001:0 /nt
-	
+RUN chmod +x /opt/app-root/export.sh && \
+        chown 777 /opt/app-root/export.sh && \
+        chown 1001:0 /opt/app-root/export.sh && \
+        chown -R 1001:0 /opt/app-root
 
-RUN chmod +x /usr/libexec/s2i/run /usr/libexec/s2i/assemble /usr/libexec/s2i/usage
+
+RUN chmod +x /usr/libexec/s2i/run /usr/libexec/s2i/assemble
 RUN chown -R 1001:0 /opt/app-root
 USER 1001
 
 #EXPOSE 1000-10000
 #EXPOSE 8080
-WORKDIR $HOME
+WORKDIR /opt/app-root
 
 CMD ["/usr/libexec/s2i/run"]
