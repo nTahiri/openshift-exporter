@@ -3,28 +3,35 @@
 #NEW_OPENSHIFT_USERNAME NEW_OPENSHIFT_PASSWORD NEW_OPENSHIFT_URL NEW_OPENSHIFT_PROJECT
 # /bin/sh export.sh -opts=dc,is,build,svc,template -ou=old-user -opp=old-user -ourl=https://144.217.161.255:8443
 # -op=test -nu=new-user -npp=new-user -nurl=https://144.217.161.255:8443 -np=test
-# wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && chmod +x ./jq && cp jq /bin
+
 
 main(){
         readeParam "$@"
         #println
         executeExport
+
+        #echo "Number files in SEARCH PATH with EXTENSION:" $(ls -1 "${SEARCHPATH}"/*."${EXTENSION}" | wc -l)
+        #if [[ -n $1 ]]; then
+        #       echo "Last line of file specified as non-opt/last argument:"
+        #       tail -1 $1
+        #fi
+
 }
 executeExport(){
         if [[ -z "${OPTIONS}" ]]; then
                 OPTIONS=all
         fi
         [ -e ${OLD_OPENSHIFT_PROJECT}.json ] && rm ${OLD_OPENSHIFT_PROJECT}.json
-
+#       cd $OPENSHIFT_OC_HOME && unset KUBECONFIG && \
                 echo "===> login to ${OLD_OPENSHIFT_URL} " && \
                 echo "====> oc login -u ${OLD_OPENSHIFT_USERNAME} -p ${OLD_OPENSHIFT_PASSWORD} ${OLD_OPENSHIFT_URL} --insecure-skip-tls-verify "
-                ./oc login -u ${OLD_OPENSHIFT_USERNAME} -p ${OLD_OPENSHIFT_PASSWORD} ${OLD_OPENSHIFT_URL} --insecure-skip-tls-verify && \
+                oc login -u ${OLD_OPENSHIFT_USERNAME} -p ${OLD_OPENSHIFT_PASSWORD} ${OLD_OPENSHIFT_URL} --insecure-skip-tls-verify && \
 
                 echo "===> connect to project ${OLD_OPENSHIFT_PROJECT}" && \
                 #/bin/oc project ${OLD_OPENSHIFT_PROJECT} && \
 
                 echo "===> export ${OPTIONS} " && \
-                ./oc export ${OPTIONS} -o json >> ${OLD_OPENSHIFT_PROJECT}.json && \
+                oc export ${OPTIONS} -o json >> ${OLD_OPENSHIFT_PROJECT}.json && \
 
                 #################################
                 jq '(. | select(.kind=="List") | .items[] | select(.kind=="Route") | .spec.host) = ""' ${OLD_OPENSHIFT_PROJECT}.json  > ${OLD_OPENSHIFT_PROJECT}-1.json
@@ -50,21 +57,21 @@ executeExport(){
 
                 ls && \
                 echo "===> logout ****" && \
-                ./oc logout && \
+                oc logout && \
 
                 echo "===> login to ${NEW_OPENSHIFT_URL} " && \
-                ./oc login -u ${NEW_OPENSHIFT_USERNAME} -p ${NEW_OPENSHIFT_PASSWORD} ${NEW_OPENSHIFT_URL} --insecure-skip-tls-verify && \
+                oc login -u ${NEW_OPENSHIFT_USERNAME} -p ${NEW_OPENSHIFT_PASSWORD} ${NEW_OPENSHIFT_URL} --insecure-skip-tls-verify && \
 
-                ./oc new-project ${NEW_OPENSHIFT_PROJECT} && \
+                oc new-project ${NEW_OPENSHIFT_PROJECT} && \
 
                 #echo "===>  login to ${NEW_OPENSHIFT_URL} " && \
                 #/bin/oc delete project ${NEW_OPENSHIFT_PROJECT} && \
 
                 echo "===> connect to project ${NEW_OPENSHIFT_PROJECT} " && \
-                ./oc project ${NEW_OPENSHIFT_PROJECT} && \
+                oc project ${NEW_OPENSHIFT_PROJECT} && \
 
                 echo "===> create $(pwd)/${OLD_OPENSHIFT_PROJECT}.json " && \
-                ./oc create -f $(pwd)/${OLD_OPENSHIFT_PROJECT}.json
+                oc create -f $(pwd)/${OLD_OPENSHIFT_PROJECT}.json
 
 }
 println(){
