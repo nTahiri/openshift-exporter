@@ -25,13 +25,13 @@ executeExport(){
 #       cd $OPENSHIFT_OC_HOME && unset KUBECONFIG && \
                 echo "===> login to ${OLD_OPENSHIFT_URL} " && \
                 echo "====> oc login -u ${OLD_OPENSHIFT_USERNAME} -p ${OLD_OPENSHIFT_PASSWORD} ${OLD_OPENSHIFT_URL} --insecure-skip-tls-verify "
-                ./oc login -u ${OLD_OPENSHIFT_USERNAME} -p ${OLD_OPENSHIFT_PASSWORD} ${OLD_OPENSHIFT_URL} --insecure-skip-tls-verify && \
+                oc login -u ${OLD_OPENSHIFT_USERNAME} -p ${OLD_OPENSHIFT_PASSWORD} ${OLD_OPENSHIFT_URL} --insecure-skip-tls-verify && \
 
                 echo "===> connect to project ${OLD_OPENSHIFT_PROJECT}" && \
                 #/bin/oc project ${OLD_OPENSHIFT_PROJECT} && \
 
                 echo "===> export ${OPTIONS} " && \
-                ./oc export ${OPTIONS} -o json >> ${OLD_OPENSHIFT_PROJECT}.json && \
+                oc export ${OPTIONS} -o json >> ${OLD_OPENSHIFT_PROJECT}.json && \
 
                 #################################
                 jq '(. | select(.kind=="List") | .items[] | select(.kind=="Route") | .spec.host) = ""' ${OLD_OPENSHIFT_PROJECT}.json  > ${OLD_OPENSHIFT_PROJECT}-1.json
@@ -57,21 +57,21 @@ executeExport(){
 
                 ls && \
                 echo "===> logout ****" && \
-                ./oc logout && \
+                oc logout && \
 
                 echo "===> login to ${NEW_OPENSHIFT_URL} " && \
-                ./oc login -u ${NEW_OPENSHIFT_USERNAME} -p ${NEW_OPENSHIFT_PASSWORD} ${NEW_OPENSHIFT_URL} --insecure-skip-tls-verify && \
+                oc login -u ${NEW_OPENSHIFT_USERNAME} -p ${NEW_OPENSHIFT_PASSWORD} ${NEW_OPENSHIFT_URL} --insecure-skip-tls-verify && \
 
-                ./oc new-project ${NEW_OPENSHIFT_PROJECT} && \
+                oc new-project ${NEW_OPENSHIFT_PROJECT} && \
 
                 #echo "===>  login to ${NEW_OPENSHIFT_URL} " && \
                 #/bin/oc delete project ${NEW_OPENSHIFT_PROJECT} && \
 
                 echo "===> connect to project ${NEW_OPENSHIFT_PROJECT} " && \
-                ./oc project ${NEW_OPENSHIFT_PROJECT} && \
+                oc project ${NEW_OPENSHIFT_PROJECT} && \
 
                 echo "===> create $(pwd)/${OLD_OPENSHIFT_PROJECT}.json " && \
-                ./oc create -f $(pwd)/${OLD_OPENSHIFT_PROJECT}.json
+                oc create -f $(pwd)/${OLD_OPENSHIFT_PROJECT}.json
 
 }
 println(){
@@ -137,4 +137,4 @@ readeParam(){
         esac
         done
 }
-main "$@"	
+main "$@"
