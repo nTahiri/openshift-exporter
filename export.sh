@@ -1,8 +1,7 @@
 #! /bin/bash -eu
 #OPTIONS OLD_OPENSHIFT_USERNAME OLD_OPENSHIFT_PASSWORD OLD_OPENSHIFT_URL OLD_OPENSHIFT_PROJECT
 #NEW_OPENSHIFT_USERNAME NEW_OPENSHIFT_PASSWORD NEW_OPENSHIFT_URL NEW_OPENSHIFT_PROJECT
-# /bin/sh export.sh -opts=dc,is,build,svc,template -ou=old-user -opp=old-user -ourl=https://144.217.161.255:8443
-# -op=test -nu=new-user -npp=new-user -nurl=https://144.217.161.255:8443 -np=test
+# /bin/sh export.sh -opts=dc,is,bc,route,svc,template -ou=old-user -opp=old-user -ourl=https://144.217.161.255:8443 -op=test -nu=new-user -npp=new-user -nurl=https://144.217.161.255:8443 -np=test
 
 
 main(){
